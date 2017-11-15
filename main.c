@@ -15,7 +15,7 @@ struct functionDictionary
 { 
 	const char key;
 	const char *decription;
-	void(*functionAddress)(); 
+	void(*functionAddress)(void); 
 };
 
 // Define your structure to be used by your help function
