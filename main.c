@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdbool.h>
 
 
 // Define functions that you want to use in your dictionary
@@ -28,26 +29,42 @@ const int HelpDictionary_Size = 4;
 
 
 // This is the function that will go trough given dictionary and print out all descriptions and characters
-void ShowDictionary(const struct functionDictionary *dict)
+void Dictionary_Show(const struct functionDictionary *dict, const int dictSize)
 {
 	uint8_t i;
 
 	printf("------------ HELP -----------\r\n");
-	printf("Dictionary has %d entries\r\n", HelpDictionary_Size);
+	printf("Dictionary has %d entries\r\n", dictSize);
 	printf("'X' - Description\r\n");
 
-	for(i=0; i< HelpDictionary_Size; i++)
+	for(i=0; i< dictSize; i++)
 	{
-		printf("'%c' - %s\n", HelpDictionary[i].key, HelpDictionary[i].decription);
+		printf("'%c' - %s\n", dict[i].key, dict[i].decription);
 	}
 
 	printf("------------ END -----------\r\n");
 }
 
+bool Dictionary_Execute(const struct functionDictionary *dict, const int dictSize, uint8_t *requestChar)
+{
+	uint8_t i;
+
+	for(i=0; i< dictSize; i++)
+	{
+		if(dict[i].key == *requestChar)
+		{
+			dict[i].functionAddress();
+			return true;
+		}
+	}
+
+	return false;
+}
+
 
 int main(void)
 {
-	int ch = 0;
+	uint8_t ch = 0;
 
 	printf("Select option: \r\n");
 	printf("(type 'h' for help or 'q' for quit) \r\n");	
@@ -65,13 +82,24 @@ int main(void)
 
 			if(ch == 'h')
 			{
-				ShowDictionary(HelpDictionary);
+				Dictionary_Show(HelpDictionary, HelpDictionary_Size);
 			}
 			else if(ch=='q')
 			{
 				printf("Goodbye! \r\n");	
 				return 0;
-			}	
+			}
+			else
+			{
+				if(Dictionary_Execute(HelpDictionary, HelpDictionary_Size, &ch) == true)
+				{
+					printf("Function executed! \r\n");
+				}
+				else
+				{
+					printf("Function failed to execute or find corresponding function.\r\n");
+				}
+			}
 
 		}
 
